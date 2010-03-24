@@ -14,6 +14,8 @@ void myCallbackFunction(
 			const FSEventStreamEventFlags eventFlags[],
 			const FSEventStreamEventId eventIds[]) {
   VALUE self = (VALUE)context;
+  
+  // FIXME: Read the docs and figure out something clever to do with this.  Dummy.
   int i;
   char **paths = eventPaths;
   VALUE rb_paths[numEvents];
@@ -22,7 +24,24 @@ void myCallbackFunction(
     rb_paths[i] = name;
   }
 
-  printf("OMG!@#$~\r\n");
+  printf("Callback called\r\n");
+  VALUE callback = rb_iv_get(self, "@callback");
+  printf("%s\r\n", TYPE(callback));
+
+  switch(TYPE(callback)) {
+  case T_STRING:
+    printf("Executing: %s\r\n", RSTRING_PTR(callback));
+    //execvp(RSTRING_PTR(callback));
+    break;
+  case T_REGEXP:
+    printf("I don't support regexp's yet because I'm not very good at this.  Sorry.\r\n");
+    rb_raise("NotImplemented", "I haven't built this yet, damnit.");
+    break;
+  default:
+    rb_raise(rb_eTypeError, "callback is not a valid value");
+    break;
+  }
+  
 
 }
 
@@ -54,6 +73,7 @@ VALUE t_create(VALUE self){
 
 VALUE t_init(VALUE self, VALUE path, VALUE callback){
   rb_iv_set(self, "@path", path);
+  rb_iv_set(self, "@callback", callback);
   return Qtrue;
 }
 
