@@ -4,29 +4,44 @@
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Native ruby extension for access to the FSEvent system on OSX.
+
+This isn't a very good implementation.  I'll PROBABLY improve it over time
+
+A much better version would probably be put together using FFI.
+It's possible.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+Signal handling in Ruby 1.9+ seems to be pretty terrible.
+Don't expect to be dropped safely to your command line after issuing a ctrl+c, no siree.  
+
+Expect to kill -s kill this mofo.
+
+Also, don't expect it to work.  This isn't a fancy release or anything, I spent some time playing with Ruby/C and threw it up on Github.  If you're made that it doesn't work either tell me or try another one.  
+
+It'd be cool if you told me.
+
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+   watchr = FSEvent.new("/tmp" => "echo 'yay tmp changed'")
+   watchr.run
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+An Apple computer (for fseventd, duh!)
+
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+gem install pure-fsevent
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2010 FIXME full name
+Copyright (c) 2010 Mel Gray
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
