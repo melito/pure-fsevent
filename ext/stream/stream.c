@@ -24,14 +24,12 @@ void myCallbackFunction(
     rb_paths[i] = name;
   }
 
-  printf("Callback called\r\n");
   VALUE callback = rb_iv_get(self, "@callback");
-  printf("%s\r\n", TYPE(callback));
-
   switch(TYPE(callback)) {
   case T_STRING:
     printf("Executing: %s\r\n", RSTRING_PTR(callback));
-    //execvp(RSTRING_PTR(callback));
+    //execvp(RSTRING_PTR(callback), (char *)0 );
+    system(RSTRING_PTR(callback));
     break;
   case T_REGEXP:
     printf("I don't support regexp's yet because I'm not very good at this.  Sorry.\r\n");
@@ -52,13 +50,19 @@ VALUE t_create(VALUE self){
   CFStringRef mypath = CFStringCreateWithCString(NULL, (char *)RSTRING_PTR(path), kCFStringEncodingUTF8);
 
   CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&mypath, 1, NULL);
-  void *callbackInfo = NULL;
   FSEventStreamRef stream;
   CFAbsoluteTime latency = 0.5; /* Latency in seconds */
 
+  FSEventStreamContext context;
+  context.version = 0;
+  context.info = (VALUE *)self;
+  context.retain = NULL;
+  context.release = NULL;
+  context.copyDescription = NULL;
+
   stream = FSEventStreamCreate(NULL,
 			       &myCallbackFunction,
-			       callbackInfo,
+			       &context,
 			       pathsToWatch,
 			       kFSEventStreamEventIdSinceNow, /* Or a previous event ID */
 			       latency,
